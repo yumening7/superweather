@@ -114,7 +114,7 @@ public class Utility {
 	public static void handleWeatherResponse(Context context,String response){
 		try {
 			JSONObject jsonObject=new JSONObject(response);
-			System.out.println(jsonObject.toString());
+//			System.out.println(jsonObject.toString());
 			JSONArray results=jsonObject.getJSONArray("results");
 			//获取当前城市
 			JSONObject resultsObj=results.getJSONObject(0);
