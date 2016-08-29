@@ -24,6 +24,8 @@
             </intent-filter>
         </activity>
         <activity android:name="com.zihangege.superweather.activity.WeatherActivity"/>
+        <service  android:name="com.zihangege.superweather.service.AutoUpdateService"/>
+        <receiver android:name="com.zihangege.superweather.receiver.AutoUpdateReceiver"/>
     </application>
 
 </manifest>

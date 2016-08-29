@@ -2,6 +2,7 @@ package com.zihangege.superweather.activity;
 
 import com.zihangege.superweather.R;
 import com.zihangege.superweather.model.City;
+import com.zihangege.superweather.service.AutoUpdateService;
 import com.zihangege.superweather.util.HttpCallbackListener;
 import com.zihangege.superweather.util.HttpUtil;
 import com.zihangege.superweather.util.Utility;
@@ -121,6 +122,9 @@ public class WeatherActivity extends Activity {
 			tv_cityName.setVisibility(View.INVISIBLE);
 //			//通过县名请求获取对应的天气信息
 			queayWeatherInfo(countyName);
+		}else{
+			//如果没有接收到县名,表示之前已设置过并获取数据保存到了本地,则直接显示本地的数据
+			showWeather();
 		}
 	}
 	/*
@@ -246,5 +250,8 @@ public class WeatherActivity extends Activity {
 		tv_cityName.setVisibility(View.VISIBLE);
 		ll_weatherInfoLayout.setVisibility(View.VISIBLE);
 		tv_publishTime.setVisibility(View.INVISIBLE);
+		//启动服务
+		Intent intent=new Intent(this,AutoUpdateService.class);
+		startService(intent);
 	}
 }
