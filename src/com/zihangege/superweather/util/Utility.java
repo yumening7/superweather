@@ -1,5 +1,17 @@
 package com.zihangege.superweather.util;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.graphics.AvoidXfermode.Mode;
 import android.text.TextUtils;
 
 import com.zihangege.superweather.db.SuperWeatherDB;
@@ -76,5 +88,82 @@ public class Utility {
 			}
 		}
 		return false;
+	}
+	
+	/*
+	 * 解析服务器返回的JSON数据，并将解析出的数据存储到本地
+	 */
+//	public static void handleWeatherResponse(Context context,String response){
+//		try {
+//			JSONObject jsonObject=new JSONObject(response);
+//			//取出JSON中的weatherInfo(天气信息)元素
+//			JSONObject weatherInfo=jsonObject.getJSONObject("weatherinfo");
+//			String cityName=weatherInfo.getString("city");
+//			String weatherCode=weatherInfo.getString("cityid");
+//			String publishTime=weatherInfo.getString("ptime");
+//			String temp1=weatherInfo.getString("temp1");
+//			String temp2=weatherInfo.getString("temp2");
+//			String weatherCondition=weatherInfo.getString("weather");
+//			System.out.println("加载的所有数据为:"+cityName+"\n"+weatherCode+"\n"+
+//					publishTime+"\n"+temp1+"\n"+temp2+"\n"+weatherCondition);
+//			saveWeatherInfo(context,cityName,weatherCode,publishTime,temp1,temp2,weatherCondition);
+//		} catch (JSONException e) {
+//			e.printStackTrace();
+//		}
+//	}
+	public static void handleWeatherResponse(Context context,String response){
+		try {
+			JSONObject jsonObject=new JSONObject(response);
+			System.out.println(jsonObject.toString());
+			JSONArray results=jsonObject.getJSONArray("results");
+			//获取当前城市
+			JSONObject resultsObj=results.getJSONObject(0);
+			String cityName=resultsObj.getString("currentCity");
+//			System.out.println("当前点击的城市为"+cityName);
+			//获取当前天气状况
+			JSONArray weatherArr=resultsObj.getJSONArray("weather_data");
+			JSONObject weatherArr0=weatherArr.getJSONObject(0);
+			//获取当前温度
+			String weatherCondition=weatherArr0.getString("weather");
+			String temp=weatherArr0.getString("temperature");
+			
+			saveWeatherInfo(context, cityName, temp, weatherCondition);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/*
+	 * 将服务器返回的所有天气信息存储到SharedPreferences文件中
+	 */
+//	private static void saveWeatherInfo(Context context, String cityName,
+//			String weatherCode, String publishTime, String temp1, String temp2,
+//			String weatherCondition) {
+//		SimpleDateFormat sdf=new SimpleDateFormat("yyyy年M月d日", Locale.CHINA);
+//		Editor edit=context.getSharedPreferences("weatherInfo", context.MODE_PRIVATE).edit();
+//		//用于判断当前是否已经选择过城市
+//		edit.putBoolean("city_selected", true);
+//		edit.putString("city_name", cityName);
+//		edit.putString("weather_code", weatherCondition);
+//		edit.putString("publish_time", publishTime);
+//		edit.putString("temp1", temp1);
+//		edit.putString("temp2", temp2);
+//		edit.putString("weather_condition", weatherCondition);
+//		//new Date()为获取当前日期
+//		edit.putString("current_date", sdf.format(new Date()));
+//		edit.commit();
+//	}
+	private static void saveWeatherInfo(Context context, String cityName,String temp,
+			String weatherCondition) {
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy年M月d日", Locale.CHINA);
+		Editor edit=context.getSharedPreferences("weatherInfo", context.MODE_PRIVATE).edit();
+		//用于判断当前是否已经选择过城市
+		edit.putBoolean("city_selected", true);
+		edit.putString("city_name", cityName);
+		edit.putString("temp", temp);
+		edit.putString("weather_condition", weatherCondition);
+		//new Date()为获取当前日期
+		edit.putString("current_date", sdf.format(new Date()));
+		edit.commit();
 	}
 }

@@ -5,6 +5,8 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -69,6 +71,13 @@ public class ChooseAreaActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		SharedPreferences preferences=getSharedPreferences("weatherInfo", MODE_PRIVATE);
+		//判断是否已经选择过城市，如果是则直接跳入天气界面
+//		if(preferences.getBoolean("city_selected", false)){
+//			Intent intent=new Intent(this,WeatherActivity.class);
+//			startActivity(intent);
+//			finish();
+//		}
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
 		listView=(ListView) findViewById(R.id.list_view);
@@ -94,6 +103,18 @@ public class ChooseAreaActivity extends Activity {
 					selectedCity=cityList.get(position);
 					//查询县
 					queryCounties();
+				}else if(currentLevel==LEVEL_COUNTY){
+					//获取当前点击的县的代号,然后传入给WeatherActivity
+//					String countyCode=countyList.get(position).getCountyCode();
+//					System.out.println("当前县代号 ：  "+countyCode);
+//					Intent intent=new Intent(ChooseAreaActivity.this,WeatherActivity.class);
+//					intent.putExtra("county_code", countyCode);
+					//获取当前点击的县的Name,然后传入给WeatherActivity
+					String countyName=countyList.get(position).getCountyName();
+					Intent intent=new Intent(ChooseAreaActivity.this,WeatherActivity.class);
+					intent.putExtra("county_name", countyName);
+					startActivity(intent);
+					finish();
 				}
 			}
 		});
