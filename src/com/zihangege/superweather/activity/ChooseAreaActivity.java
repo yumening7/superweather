@@ -72,12 +72,13 @@ public class ChooseAreaActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		SharedPreferences preferences=getSharedPreferences("weatherInfo", MODE_PRIVATE);
-		//判断是否已经选择过城市，如果是则直接跳入天气界面
-//		if(preferences.getBoolean("city_selected", false)){
-//			Intent intent=new Intent(this,WeatherActivity.class);
-//			startActivity(intent);
-//			finish();
-//		}
+		//判断是否已经选择过城市，并且不是从WeatherActivity界面跳转过来的，如果是则直接跳入天气界面
+		if(preferences.getBoolean("city_selected", false)
+				&&!getIntent().getBooleanExtra("from_weather_activity", false)){
+			Intent intent=new Intent(this,WeatherActivity.class);
+			startActivity(intent);
+			finish();
+		}
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
 		listView=(ListView) findViewById(R.id.list_view);

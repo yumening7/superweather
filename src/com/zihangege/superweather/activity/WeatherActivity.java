@@ -7,11 +7,14 @@ import com.zihangege.superweather.util.HttpUtil;
 import com.zihangege.superweather.util.Utility;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -45,7 +48,14 @@ public class WeatherActivity extends Activity {
 	 * 用于显示温度
 	 */
 	private TextView tv_temp;
-	
+//	/*
+//	 * 用于切换城市
+//	 */
+//	private Button btn_switch;
+//	/*
+//	 * 用于刷新天气
+//	 */
+//	private Button btn_refresh;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -63,8 +73,31 @@ public class WeatherActivity extends Activity {
 		tv_currentDate=(TextView) findViewById(R.id.tv_currentDate);
 		tv_weatherCondition=(TextView) findViewById(R.id.tv_weatherCondition);
 		tv_temp=(TextView) findViewById(R.id.tv_temp);
-//		tv_temp1=(TextView) findViewById(R.id.tv_temp1);
-//		tv_temp2=(TextView) findViewById(R.id.tv_temp2);
+		//切换城市按钮监听
+		findViewById(R.id.btn_switchCity).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent=new Intent(WeatherActivity.this,ChooseAreaActivity.class);
+				//做个标记，代表这个意图是从WeatherActivity传递过去的
+				intent.putExtra("from_weather_activity", true);
+				startActivity(intent);
+				finish();
+			}
+		});
+		//刷新按钮监听
+		findViewById(R.id.btn_refresh).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				tv_publishTime.setText("同步中...");
+				tv_publishTime.setVisibility(View.VISIBLE);
+				ll_weatherInfoLayout.setVisibility(View.INVISIBLE);
+				SharedPreferences preferences=getSharedPreferences("weatherInfo", MODE_PRIVATE);
+				String countyName=preferences.getString("city_name", "");
+				queayWeatherInfo(countyName);
+			}
+		});
 		
 //		String countyCode=getIntent().getStringExtra("county_code");
 		String countyName=getIntent().getStringExtra("county_name");
